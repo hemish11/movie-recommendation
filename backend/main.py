@@ -17,7 +17,6 @@ async def recommend_movie(movie_query: MovieQuery):
         recommender = movie_recommendation.MovieRecommender()
         recommendations = recommender.get_recommendations(title)
 
-
         if recommendations:
             return recommendations
         else:

@@ -36,7 +36,8 @@ class MovieRecommender:
         self.C = self.df2["vote_average"].mean()
         self.m = self.df2["vote_count"].quantile(0.9)
         self.q_movies = self.df2.loc[self.df2["vote_count"] >= self.m].copy()
-        self.q_movies["score"] = self.q_movies.apply(self.weighted_rating, axis=1)
+        self.q_movies["score"] = self.q_movies.apply(
+            self.weighted_rating, axis=1)
 
         self.tfidf = TfidfVectorizer(stop_words="english")
         self.df2["overview"] = self.df2["overview"].fillna("")
@@ -84,23 +85,3 @@ class MovieRecommender:
             )
 
         return recommendations
-
-    def create_soup(self, x):
-        return (
-            " ".join(x["keywords"])
-            + " "
-            + " ".join(x["cast"])
-            + " "
-            + x["director"]
-            + " "
-            + " ".join(x["genres"])
-        )
-
-    def get_recommendations_by_soup(self, title_x):
-        soup_correlation = self._calculate_soup_correlation()
-        return self.get_recommendations(title_x, correlation=soup_correlation)
-
-    def _calculate_soup_correlation(self):
-        count = CountVectorizer(stop_words="english")
-        count_matrix = count.fit_transform(self.df2["soup"])
-        return cosine_similarity(count_matrix, count_matrix)
